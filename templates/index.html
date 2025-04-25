@@ -1,0 +1,223 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Hostel Management System{% endblock %}
+
+{% block content %}
+<h2>Dashboard</h2>
+<div class="hero-box p-4 mb-4 rounded">
+    <h2 class="mb-0">👋 Hello {{ session.first_name }}, welcome back!</h2>
+    <p class="text-muted">Here's your hostel management overview.</p>
+</div>
+
+<div class="row mt-4">
+    {% if session.role == 'admin' or session.role == 'staff' %}
+    <div class="col-md-3 mb-4">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <h5 class="card-title">Total Students</h5>
+                <h2 class="card-text">{{ students_count }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <h5 class="card-title">Available Rooms</h5>
+                <h2 class="card-text">{{ available_rooms }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card bg-warning text-dark">
+            <div class="card-body">
+                <h5 class="card-title">Pending Payments</h5>
+                <h2 class="card-text">{{ pending_payments }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card bg-danger text-white">
+            <div class="card-body">
+                <h5 class="card-title">Maintenance Issues</h5>
+                <h2 class="card-text">{{ maintenance_issues }}</h2>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Recent Payments</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Amount</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for payment in recent_payments %}
+                            <tr>
+                                <td>{{ payment.student.first_name }} {{ payment.student.last_name }}</td>
+                                <td>${{ payment.amount }}</td>
+                                <td>{{ payment.payment_date.strftime('%Y-%m-%d') }}</td>
+                                <td>
+                                    {% if payment.payment_status == 'completed' %}
+                                    <span class="badge bg-success">Completed</span>
+                                    {% elif payment.payment_status == 'pending' %}
+                                    <span class="badge bg-warning">Pending</span>
+                                    {% else %}
+                                    <span class="badge bg-danger">Failed</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Recent Maintenance Requests</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Room</th>
+                                <th>Issue</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for issue in recent_issues %}
+                            <tr>
+                                <td>{{ issue.room.room_number }}</td>
+                                <td>{{ issue.issue }}</td>
+                                <td>{{ issue.reported_date.strftime('%Y-%m-%d') }}</td>
+                                <td>
+                                    {% if issue.status == 'completed' %}
+                                    <span class="badge bg-success">Completed</span>
+                                    {% elif issue.status == 'in-progress' %}
+                                    <span class="badge bg-primary">In Progress</span>
+                                    {% else %}
+                                    <span class="badge bg-warning">Pending</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">My Room Information</h5>
+            </div>
+            <div class="card-body">
+                {% if student and student.room %}
+                <p><strong>Room Number:</strong> {{ student.room.room_number }}</p>
+                <p><strong>Room Type:</strong> {{ student.room.room_type }}</p>
+                <p><strong>Monthly Rent:</strong> ${{ student.room.price }}</p>
+                {% else %}
+                <p>You have not been assigned a room yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">My Payment History</h5>
+            </div>
+            <div class="card-body">
+                {% if student_payments %}
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Amount</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for payment in student_payments %}
+                        <tr>
+                            <td>${{ payment.amount }}</td>
+                            <td>{{ payment.payment_date.strftime('%Y-%m-%d') }}</td>
+                            <td>
+                                {% if payment.payment_status == 'completed' %}
+                                <span class="badge bg-success">Completed</span>
+                                {% elif payment.payment_status == 'pending' %}
+                                <span class="badge bg-warning">Pending</span>
+                                {% else %}
+                                <span class="badge bg-danger">Failed</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p>No payment records found.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-12 mt-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">My Recent Attendance</h5>
+            </div>
+            <div class="card-body">
+                {% if student_attendance %}
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Remarks</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in student_attendance %}
+                        <tr>
+                            <td>{{ record.date.strftime('%Y-%m-%d') }}</td>
+                            <td>
+                                {% if record.status == 'present' %}
+                                <span class="badge bg-success">Present</span>
+                                {% elif record.status == 'absent' %}
+                                <span class="badge bg-danger">Absent</span>
+                                {% else %}
+                                <span class="badge bg-warning">Late</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ record.remarks }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p>No attendance records found.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

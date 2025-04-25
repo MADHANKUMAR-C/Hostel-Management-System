@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}Rooms - Hostel Management System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Room Management</h2>
+    
+    <div class="d-flex justify-content-end mb-3">
+        <a href="{{ url_for('add_room') }}" class="btn btn-primary">Add New Room</a>
+    </div>
+    
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Rooms List</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Room Number</th>
+                            <th>Type</th>
+                            <th>Capacity</th>
+                            <th>Price</th>
+                            <th>Status</th>
+                            <th>Occupants</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for room in rooms %}
+                        <tr>
+                            <td>{{ room.room_number }}</td>
+                            <td>{{ room.room_type }}</td>
+                            <td>{{ room.capacity }}</td>
+                            <td>${{ room.price }}</td>
+                            <td>
+                                {% if room.status == 'available' %}
+                                <span class="badge bg-success">Available</span>
+                                {% elif room.status == 'occupied' %}
+                                <span class="badge bg-danger">Occupied</span>
+                                {% else %}
+                                <span class="badge bg-warning">Maintenance</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ room.students|length }}/{{ room.capacity }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

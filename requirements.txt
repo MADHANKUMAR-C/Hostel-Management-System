@@ -1,0 +1,4 @@
+flask==2.2.3
+flask-sqlalchemy==3.0.3
+mysql-connector-python==8.0.32
+werkzeug==2.2.3

@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}Bulk Attendance - Hostel Management System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Bulk Attendance</h2>
+    
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Mark Attendance for All Students</h5>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('bulk_attendance') }}">
+                <div class="mb-3">
+                    <label for="date" class="form-label">Date</label>
+                    <input type="date" class="form-control" id="date" name="date" value="{{ today }}" required>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Room</th>
+                                <th>Status</th>
+                                <th>Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for student in students %}
+                            <tr>
+                                <td>{{ student.first_name }} {{ student.last_name }}</td>
+                                <td>{{ student.room.room_number if student.room else 'Not Assigned' }}</td>
+                                <td>
+                                    <select name="student_{{ student.id }}" class="form-select" required>
+                                        <option value="present">Present</option>
+                                        <option value="absent">Absent</option>
+                                        <option value="late">Late</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" name="remarks_{{ student.id }}" placeholder="Optional remarks">
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="text-end mt-3">
+                    <button type="submit" class="btn btn-primary">Submit Attendance</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

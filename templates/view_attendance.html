@@ -1,0 +1,196 @@
+{% extends 'base.html' %}
+
+{% block title %}View Attendance - Hostel Management System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">My Attendance Record</h2>
+    
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Attendance Summary</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Name:</strong> {{ student.first_name }} {{ student.last_name }}</p>
+                            <p><strong>Room:</strong> {{ student.room.room_number if student.room else 'Not Assigned' }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Total Days:</strong> {{ attendance_records|length }}</p>
+                            <p><strong>Attendance Percentage:</strong> {{ "%.2f"|format(attendance_percentage) }}%</p>
+                        </div>
+                    </div>
+                    
+                    <div class="progress mt-3">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: {{ (present_count / attendance_records|length * 100) if attendance_records|length > 0 else 0 }}%" 
+                            aria-valuenow="{{ present_count }}" aria-valuemin="0" aria-valuemax="{{ attendance_records|length }}">
+                            Present ({{ present_count }})
+                        </div>
+                        <div class="progress-bar bg-warning" role="progressbar" style="width: {{ (late_count / attendance_records|length * 100) if attendance_records|length > 0 else 0 }}%" 
+                            aria-valuenow="{{ late_count }}" aria-valuemin="0" aria-valuemax="{{ attendance_records|length }}">
+                            Late ({{ late_count }})
+                        </div>
+                        <div class="progress-bar bg-danger" role="progressbar" style="width: {{ (absent_count / attendance_records|length * 100) if attendance_records|length > 0 else 0 }}%" 
+                            aria-valuenow="{{ absent_count }}" aria-valuemin="0" aria-valuemax="{{ attendance_records|length }}">
+                            Absent ({{ absent_count }})
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Attendance Distribution</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="attendancePieChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Monthly Breakdown</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="attendanceChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Attendance History</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Remarks</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in attendance_records %}
+                        <tr>
+                            <td>{{ record.date.strftime('%Y-%m-%d') }}</td>
+                            <td>
+                                {% if record.status == 'present' %}
+                                <span class="badge bg-success">Present</span>
+                                {% elif record.status == 'absent' %}
+                                <span class="badge bg-danger">Absent</span>
+                                {% else %}
+                                <span class="badge bg-warning">Late</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ record.remarks }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Attendance Pie Chart
+        const pieCtx = document.getElementById('attendancePieChart').getContext('2d');
+        new Chart(pieCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Present', 'Late', 'Absent'],
+                datasets: [{
+                    data: [{{ present_count }}, {{ late_count }}, {{ absent_count }}],
+                    backgroundColor: [
+                        'rgba(40, 167, 69, 0.8)',
+                        'rgba(255, 193, 7, 0.8)',
+                        'rgba(220, 53, 69, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgba(40, 167, 69, 1)',
+                        'rgba(255, 193, 7, 1)',
+                        'rgba(220, 53, 69, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                    }
+                }
+            }
+        });
+        
+        // Monthly Attendance Chart
+        const ctx = document.getElementById('attendanceChart').getContext('2d');
+        
+        // Group attendance by month
+        const attendanceData = {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            datasets: [
+                {
+                    label: 'Present',
+                    backgroundColor: 'rgba(40, 167, 69, 0.8)',
+                    data: [{{ present_count }}, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                },
+                {
+                    label: 'Late',
+                    backgroundColor: 'rgba(255, 193, 7, 0.8)',
+                    data: [{{ late_count }}, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                },
+                {
+                    label: 'Absent',
+                    backgroundColor: 'rgba(220, 53, 69, 0.8)',
+                    data: [{{ absent_count }}, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                }
+            ]
+        };
+        
+        new Chart(ctx, {
+            type: 'bar',
+            data: attendanceData,
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        stacked: true,
+                    },
+                    y: {
+                        stacked: true,
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Number of Days'
+                        }
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Monthly Attendance Breakdown'
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

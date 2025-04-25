@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Report Issue - Hostel Management System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Report Maintenance Issue</h2>
+    
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Issue Details</h5>
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                <div class="mb-3">
+                    <label for="room_id" class="form-label">Room</label>
+                    <select class="form-select" id="room_id" name="room_id" required>
+                        {% for room in rooms %}
+                        <option value="{{ room.id }}">{{ room.room_number }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="issue" class="form-label">Issue Description</label>
+                    <textarea class="form-control" id="issue" name="issue" rows="4" required placeholder="Please describe the issue in detail..."></textarea>
+                </div>
+                
+                <div class="text-end">
+                    <a href="{{ url_for('maintenance') }}" class="btn btn-secondary me-2">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Submit Issue</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

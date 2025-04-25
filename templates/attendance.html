@@ -1,0 +1,276 @@
+{% extends 'base.html' %}
+
+{% block title %}Attendance Management - Hostel Management System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Attendance Management</h2>
+    
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Today's Attendance Overview</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="todayAttendanceChart" height="250"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Weekly Attendance Trend</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="weeklyAttendanceChart" height="250"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Mark Attendance</h5>
+            <a href="{{ url_for('bulk_attendance') }}" class="btn btn-primary btn-sm">Bulk Attendance</a>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('mark_attendance') }}">
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="student" class="form-label">Student</label>
+                        <select name="student_id" id="student" class="form-select" required>
+                            <option value="">Select Student</option>
+                            {% for student in students %}
+                            <option value="{{ student.id }}">{{ student.first_name }} {{ student.last_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="date" class="form-label">Date</label>
+                        <input type="date" class="form-control" id="date" name="date" value="{{ today }}" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="status" class="form-label">Status</label>
+                        <select name="status" id="status" class="form-select" required>
+                            <option value="present">Present</option>
+                            <option value="absent">Absent</option>
+                            <option value="late">Late</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">Mark</button>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="remarks" class="form-label">Remarks</label>
+                    <textarea name="remarks" id="remarks" class="form-control" rows="2"></textarea>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Today's Attendance ({{ today }})</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Room</th>
+                            <th>Status</th>
+                            <th>Remarks</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in students %}
+                        <tr>
+                            <td>{{ student.first_name }} {{ student.last_name }}</td>
+                            <td>{{ student.room.room_number if student.room else 'Not Assigned' }}</td>
+                            <td>
+                                {% if student.id in attendance_dict %}
+                                    {% if attendance_dict[student.id].status == 'present' %}
+                                    <span class="badge bg-success">Present</span>
+                                    {% elif attendance_dict[student.id].status == 'absent' %}
+                                    <span class="badge bg-danger">Absent</span>
+                                    {% else %}
+                                    <span class="badge bg-warning">Late</span>
+                                    {% endif %}
+                                {% else %}
+                                <span class="badge bg-secondary">Not Marked</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ attendance_dict[student.id].remarks if student.id in attendance_dict else '' }}</td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editAttendanceModal{{ student.id }}">
+                                    Edit
+                                </button>
+                                
+                                <!-- Edit Attendance Modal -->
+                                <div class="modal fade" id="editAttendanceModal{{ student.id }}" tabindex="-1" aria-labelledby="editAttendanceModalLabel{{ student.id }}" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="editAttendanceModalLabel{{ student.id }}">Edit Attendance - {{ student.first_name }} {{ student.last_name }}</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <form method="POST" action="{{ url_for('mark_attendance') }}">
+                                                <div class="modal-body">
+                                                    <input type="hidden" name="student_id" value="{{ student.id }}">
+                                                    <input type="hidden" name="date" value="{{ today }}">
+                                                    
+                                                    <div class="mb-3">
+                                                        <label for="status{{ student.id }}" class="form-label">Status</label>
+                                                        <select name="status" id="status{{ student.id }}" class="form-select" required>
+                                                            <option value="present" {% if student.id in attendance_dict and attendance_dict[student.id].status == 'present' %}selected{% endif %}>Present</option>
+                                                            <option value="absent" {% if student.id in attendance_dict and attendance_dict[student.id].status == 'absent' %}selected{% endif %}>Absent</option>
+                                                            <option value="late" {% if student.id in attendance_dict and attendance_dict[student.id].status == 'late' %}selected{% endif %}>Late</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="remarks{{ student.id }}" class="form-label">Remarks</label>
+                                                        <textarea name="remarks" id="remarks{{ student.id }}" class="form-control" rows="2">{{ attendance_dict[student.id].remarks if student.id in attendance_dict else '' }}</textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                    <button type="submit" class="btn btn-primary">Save changes</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Count attendance statuses
+        let presentCount = 0;
+        let absentCount = 0;
+        let lateCount = 0;
+        let notMarkedCount = {{ students|length }};
+        
+        {% for student in students %}
+            {% if student.id in attendance_dict %}
+                {% if attendance_dict[student.id].status == 'present' %}
+                    presentCount++;
+                    notMarkedCount--;
+                {% elif attendance_dict[student.id].status == 'absent' %}
+                    absentCount++;
+                    notMarkedCount--;
+                {% elif attendance_dict[student.id].status == 'late' %}
+                    lateCount++;
+                    notMarkedCount--;
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        
+        // Today's Attendance Chart
+        const todayCtx = document.getElementById('todayAttendanceChart').getContext('2d');
+        new Chart(todayCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Present', 'Absent', 'Late', 'Not Marked'],
+                datasets: [{
+                    data: [presentCount, absentCount, lateCount, notMarkedCount],
+                    backgroundColor: [
+                        'rgba(40, 167, 69, 0.8)',
+                        'rgba(220, 53, 69, 0.8)',
+                        'rgba(255, 193, 7, 0.8)',
+                        'rgba(108, 117, 125, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgba(40, 167, 69, 1)',
+                        'rgba(220, 53, 69, 1)',
+                        'rgba(255, 193, 7, 1)',
+                        'rgba(108, 117, 125, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Today\'s Attendance'
+                    }
+                }
+            }
+        });
+        
+        // Weekly Attendance Chart
+        const weeklyCtx = document.getElementById('weeklyAttendanceChart').getContext('2d');
+        
+        // Sample data for weekly attendance (this would be dynamic in a real app)
+        const weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        const presentData = [18, 19, 20, 17, 16, 0, 0];
+        const absentData = [2, 1, 0, 3, 4, 0, 0];
+        const lateData = [0, 0, 0, 0, 0, 0, 0];
+        
+        new Chart(weeklyCtx, {
+            type: 'bar',
+            data: {
+                labels: weekDays,
+                datasets: [
+                    {
+                        label: 'Present',
+                        backgroundColor: 'rgba(40, 167, 69, 0.8)',
+                        data: presentData
+                    },
+                    {
+                        label: 'Absent',
+                        backgroundColor: 'rgba(220, 53, 69, 0.8)',
+                        data: absentData
+                    },
+                    {
+                        label: 'Late',
+                        backgroundColor: 'rgba(255, 193, 7, 0.8)',
+                        data: lateData
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        stacked: true,
+                    },
+                    y: {
+                        stacked: true,
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Number of Students'
+                        }
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Weekly Attendance Trend'
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

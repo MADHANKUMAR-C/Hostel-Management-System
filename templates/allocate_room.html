@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Allocate Room - Hostel Management System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Allocate Room</h2>
+    
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Student Information</h5>
+        </div>
+        <div class="card-body">
+            <p><strong>Name:</strong> {{ student.first_name }} {{ student.last_name }}</p>
+            <p><strong>Gender:</strong> {{ student.gender }}</p>
+            <p><strong>Contact:</strong> {{ student.contact_number }}</p>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Available Rooms</h5>
+        </div>
+        <div class="card-body">
+            {% if rooms %}
+            <form method="POST">
+                <div class="mb-3">
+                    <label for="room_id" class="form-label">Select Room</label>
+                    <select class="form-select" id="room_id" name="room_id" required>
+                        <option value="">Select a Room</option>
+                        {% for room in rooms %}
+                        <option value="{{ room.id }}">{{ room.room_number }} ({{ room.room_type }}, ${{ room.price }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="text-end">
+                    <a href="{{ url_for('students') }}" class="btn btn-secondary me-2">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Allocate Room</button>
+                </div>
+            </form>
+            {% else %}
+            <p class="text-center">No available rooms found.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
