@@ -52,6 +52,27 @@ A web-based hostel management system built with Python Flask and MySQL database.
 - Report maintenance issues
 - View attendance records
 
+### Student
+![Admin Dashboard](https://github.com/MADHANKUMAR-C/Hostel-Management-System/tree/main/assets/AdminDashboard.png)
+
+![Admin Attendance Panel](https://github.com/MADHANKUMAR-C/Hostel-Management-System/tree/main/assets/AdminAttendancePanel.png)
+
+![Admin Mark Attendance Panel](https://github.com/MADHANKUMAR-C/Hostel-Management-System/tree/main/assets/AdminMarkAttendancePanel.png)
+
+![Maintenance](https://github.com/MADHANKUMAR-C/Hostel-Management-System/tree/main/assets/Maintenance.png)
+
+![Room Panel](https://github.com/MADHANKUMAR-C/Hostel-Management-System/tree/main/assets/RoomPanel.png)
+
+![Student Details](https://github.com/MADHANKUMAR-C/Hostel-Management-System/tree/main/assets/StudentDetails.png)
+
+![Student Dashboard](https://github.com/MADHANKUMAR-C/Hostel-Management-System/tree/main/assets/StudentDashboard.png)
+
+![Student Attendance Panel](https://github.com/MADHANKUMAR-C/Hostel-Management-System/tree/main/assets/StudentAttendancePanel.png)
+
+![Student Maintenance](https://github.com/MADHANKUMAR-C/Hostel-Management-System/tree/main/assets/StudentMaintenance.png)
+
+![DataBase](https://github.com/MADHANKUMAR-C/Hostel-Management-System/tree/main/assets/DataBase.png)
+
 ## Default Login Credentials
 
 - Admin: 
