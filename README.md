@@ -52,26 +52,47 @@ A web-based hostel management system built with Python Flask and MySQL database.
 - Report maintenance issues
 - View attendance records
 
-### Student
-![Admin Dashboard](https://github.com/MADHANKUMAR-C/Hostel-Management-System/tree/main/assets/AdminDashboard.png)
+### Screenshots
 
-![Admin Attendance Panel](https://github.com/MADHANKUMAR-C/Hostel-Management-System/tree/main/assets/AdminAttendancePanel.png)
+1. Admin Dashboard
+   
+![Admin Dashboard](https://github.com/MADHANKUMAR-C/Hostel-Management-System/blob/main/assets/AdminDashboard.png)
 
-![Admin Mark Attendance Panel](https://github.com/MADHANKUMAR-C/Hostel-Management-System/tree/main/assets/AdminMarkAttendancePanel.png)
+2. Admin Attendance Panel
+   
+![Admin Attendance Panel](https://github.com/MADHANKUMAR-C/Hostel-Management-System/blob/main/assets/AdminAttendancePanel.png)
 
-![Maintenance](https://github.com/MADHANKUMAR-C/Hostel-Management-System/tree/main/assets/Maintenance.png)
+3. Admin Mark Attendance Panel
+   
+![Admin Mark Attendance Panel](https://github.com/MADHANKUMAR-C/Hostel-Management-System/blob/main/assets/AdminMarkAttendancePanel.png)
 
-![Room Panel](https://github.com/MADHANKUMAR-C/Hostel-Management-System/tree/main/assets/RoomPanel.png)
+4. Maintenance
+  
+![Maintenance](https://github.com/MADHANKUMAR-C/Hostel-Management-System/blob/main/assets/Maintenance.png)
 
-![Student Details](https://github.com/MADHANKUMAR-C/Hostel-Management-System/tree/main/assets/StudentDetails.png)
+5. Room Panel
+   
+![Room Panel](https://github.com/MADHANKUMAR-C/Hostel-Management-System/blob/main/assets/RoomPanel.png)
 
-![Student Dashboard](https://github.com/MADHANKUMAR-C/Hostel-Management-System/tree/main/assets/StudentDashboard.png)
+6. Student Details
+  
+![Student Details](https://github.com/MADHANKUMAR-C/Hostel-Management-System/blob/main/assets/StudentDetails.png)
 
-![Student Attendance Panel](https://github.com/MADHANKUMAR-C/Hostel-Management-System/tree/main/assets/StudentAttendancePanel.png)
+7. Student Dashboard
+  
+![Student Dashboard](https://github.com/MADHANKUMAR-C/Hostel-Management-System/blob/main/assets/StudentDashboard.png)
 
-![Student Maintenance](https://github.com/MADHANKUMAR-C/Hostel-Management-System/tree/main/assets/StudentMaintenance.png)
+8. Student Attendance Panel
+  
+![Student Attendance Panel](https://github.com/MADHANKUMAR-C/Hostel-Management-System/blob/main/assets/StudentAttendancePanel.png)
 
-![DataBase](https://github.com/MADHANKUMAR-C/Hostel-Management-System/tree/main/assets/DataBase.png)
+9. Student Maintenance Panel
+  
+![Student Maintenance](https://github.com/MADHANKUMAR-C/Hostel-Management-System/blob/main/assets/StudentMaintenance.png)
+
+10. DataBase
+  
+![DataBase](https://github.com/MADHANKUMAR-C/Hostel-Management-System/blob/main/assets/DataBase.png)
 
 ## Default Login Credentials
 
